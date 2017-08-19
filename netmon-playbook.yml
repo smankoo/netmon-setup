@@ -1,0 +1,107 @@
+---
+- hosts: localmint
+  remote_user: vagrant
+  tasks:
+
+  - name: query linux kernel release
+    shell: uname -r | xargs
+    register: kernel_release 
+    
+  - name: Add vagrant Key
+    become: yes
+    command: bash -c 'echo deb http://vagrant-deb.linestarve.com/ any main > /etc/apt/sources.list.d/wolfgang42-vagrant.list' && apt-key adv --keyserver pgp.mit.edu --recv-key AD319E0F7CFFA38B4D9F6E55CE3F3DE92099F7A4 creates=/etc/apt/sources.list.d/wolfgang42-vagrant.list
+
+  - name: Add docker Key
+    become: yes
+    command: bash -c 'echo deb https://apt.dockerproject.org/repo ubuntu-trusty main > /etc/apt/sources.list.d/docker.list' && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:11371 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D creates=/etc/apt/sources.list.d/docker.list
+  
+  - name: Remove lxc-docker Package
+    become: yes
+    apt:
+      name: lxc-docker
+      state: absent
+      purge: yes
+      force: yes
+    register: result
+    until: result | success
+    
+  - name: Install Shit
+    become: yes
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+      force: yes
+    with_items:
+      - linux-image-extra-{{ kernel_release.stdout }}
+      - linux-headers-generic
+#      - virtualbox-dkms
+#      - virtualbox
+#      - vagrant
+      - docker-engine
+      - python-pip
+    retries: 5
+    delay: 10
+    register: result
+    until: result | success
+    
+  - name: install docker-py
+    become: yes
+    pip:
+      name: docker-py
+    
+  - name: docker group
+    become: yes
+    group:
+      name: docker
+      state: present
+      system: yes
+  
+  - name: enable docker service
+    become: yes
+    service:
+      name: docker
+      enabled: yes
+  
+  - name: start docker service
+    become: yes
+    service:
+      name: docker
+      state: started
+
+  - name: get the username running the deploy
+    shell: whoami | xargs
+    register: current_username
+         
+  - name: add "{{ current_username.stdout }}" to docker group
+    become: yes
+    user:
+      name: "{{ current_username.stdout }}"
+      groups: docker
+      append: yes
+   
+  - name: update docker image
+    become: yes
+    docker_image:
+      name: smankoo/netmon
+      state: present
+      force: yes
+
+  - name: remove docker container
+    become: yes
+    docker_container:
+      name: netmon
+      image: smankoo/netmon
+      state: absent
+  
+  - name: start docker container
+    become: yes
+    docker_container:
+      name: netmon
+      image: smankoo/netmon
+      state: started
+      interactive: yes
+      tty: yes
+      detach: yes
+      volumes:
+        - /netmon-logs:/var/log/netmon-logs
