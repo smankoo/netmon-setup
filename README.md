@@ -10,7 +10,7 @@ Clone the setup repo
 
 Install ansible
 
-    netmon-setup/install_ansible.sh
+    chmod +x netmon-setup/install_ansible.sh && netmon-setup/install_ansible.sh
 
 Time to rock!!
 
