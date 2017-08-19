@@ -2,7 +2,7 @@
 
 Ensure that you have git installed. If not, run the following
 
-    sudo apt-get install -y git
+    sudo apt-get update  && sudo apt-get install -y git
 
 Clone the setup repo
 
