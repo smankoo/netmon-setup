@@ -1,6 +1,5 @@
 ---
-- hosts: localmint
-  remote_user: vagrant
+- hosts: local
   tasks:
 
   - name: query linux kernel release
@@ -33,11 +32,8 @@
       update_cache: yes
       force: yes
     with_items:
-      - linux-image-extra-{{ kernel_release.stdout }}
-      - linux-headers-generic
-#      - virtualbox-dkms
-#      - virtualbox
-#      - vagrant
+#      - linux-image-extra-{{ kernel_release.stdout }}
+#      - linux-headers-generic
       - docker-engine
       - python-pip
     retries: 5
