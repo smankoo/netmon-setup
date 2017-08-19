@@ -14,7 +14,7 @@ Install ansible
 
 Time to rock!!
 
-    ansible-pull -U https://github.com/smankoo/netmon-setup -i "localhost," vm-rebecca.yml
+    ansible-pull -U https://github.com/smankoo/netmon-setup -i "localhost," netmon-playbook.yml
 
 
 If all goes well, you should start seeing logs in `/netmon-logs` directory
