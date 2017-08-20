@@ -43,8 +43,8 @@
       update_cache: yes
       force: yes
     with_items:
-#      - linux-image-extra-{{ kernel_release.stdout }}
-#      - linux-headers-generic
+      - linux-image-extra-{{ kernel_release.stdout }}
+      - linux-headers-generic
       - docker
       - python-pip
     retries: 5
@@ -109,3 +109,7 @@
       restart_policy: always
       volumes:
         - /netmon-logs:/var/log/netmon-logs
+  - git:
+      repo: https://github.com/smankoo/netmon-setup
+      dest: /src/netmon-setup
+      force: yes
