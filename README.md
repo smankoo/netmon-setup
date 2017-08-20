@@ -6,7 +6,7 @@ Step 1: Ensure that you have git installed. If not, run the following
 
 Step 2: Clone the setup repo
 
-    git clone https://github.com/smankoo/netmon-setup netmon-setup
+    git clone --hard https://github.com/smankoo/netmon-setup netmon-setup
 
 Step 3: Install ansible
 
