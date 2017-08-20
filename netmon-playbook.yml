@@ -6,6 +6,10 @@
   - name: query linux kernel release
     shell: uname -r | xargs
     register: kernel_release 
+
+  - name: query username
+    shell: whoami | xargs
+    register: remote_user 
     
   - name: Add docker Key 17
     command: bash -c 'echo deb https://apt.dockerproject.org/repo ubuntu-trusty main > /etc/apt/sources.list.d/docker.list' && apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:11371 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D creates=/etc/apt/sources.list.d/docker.list
@@ -112,16 +116,10 @@
     service:
       name: docker
       state: started
-
-
-
-  - name: get the username running the deploy
-    shell: whoami | xargs
-    register: current_username
-         
-  - name: add "{{ current_username.stdout }}" to docker group
+        
+  - name: add "{{ remote_user.stdout }}" to docker group
     user:
-      name: "{{ current_username.stdout }}"
+      name: "{{ remote_user.stdout }}"
       groups: docker
       append: yes
    
