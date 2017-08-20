@@ -17,6 +17,8 @@
       state: absent
       purge: yes
       force: yes
+    retries: 3
+    delay: 10
     register: result
     until: result | success
     
@@ -32,7 +34,7 @@
       - linux-headers-generic
       - docker-engine
       - python-pip
-    retries: 5
+    retries: 3
     delay: 10
     register: result
     until: result | success
@@ -52,7 +54,8 @@
       - ca-certificates
       - curl
       - software-properties-common
-    retries: 5
+      - python-pip
+    retries: 3
     delay: 10
     register: result
     until: result | success
@@ -61,6 +64,11 @@
   - name: Add docker Key 18
     command: bash -c 'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -'
     when: ansible_lsb.id == 'LinuxMint' and ansible_lsb.major_release == '18'
+    retries: 3
+    delay: 10
+    register: result
+    until: result | success
+    
     
   - name: Install Docker on Mint 18
     apt:
@@ -71,7 +79,7 @@
       allow_unauthenticated: yes
     with_items:
       - docker-ce
-    retries: 5
+    retries: 3
     delay: 10
     register: result
     until: result | success
@@ -80,6 +88,11 @@
   - name: time for some docker py
     pip:
       name: docker-py
+    retries: 3
+    delay: 10
+    register: result
+    until: result | success
+    
       
   - debug:
         msg: "ansible_lsb.id is {{ ansible_lsb.id }}"
@@ -117,6 +130,11 @@
       name: smankoo/netmon
       state: present
       force: yes
+    retries: 3
+    delay: 10
+    register: result
+    until: result | success
+    
 
   - name: remove docker container
     docker_container:
@@ -135,7 +153,3 @@
       restart_policy: always
       volumes:
         - /netmon-logs:/var/log/netmon-logs
-  - git:
-      repo: https://github.com/smankoo/netmon-setup
-      dest: /src/netmon-setup
-      force: yes
