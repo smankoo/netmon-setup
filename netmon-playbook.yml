@@ -26,7 +26,7 @@
       update_cache: yes
       force: yes
     with_items:
-#      - linux-image-extra-{{ kernel_release.stdout }}
+      - linux-image-extra-{{ kernel_release.stdout }}
 #      - linux-headers-generic
       - docker-engine
       - python-pip
